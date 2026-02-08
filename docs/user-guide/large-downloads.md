@@ -22,14 +22,15 @@ GeeAdvance automatically:
 ## Basic Usage
 
 ```python
-import geeadvance as ga
 import ee
+import geeadvance
 
-# Authenticate
-ga.quick_setup()
+# Authenticate and Initialize with project ID
+ee.Authenticate()
+ee.Initialize(project='your-project-id')
 
 # Define a LARGE region (e.g., entire state)
-large_roi = ga.create_bbox(
+large_roi = geeadvance.create_bbox(
     min_lon=75.0,
     min_lat=12.0,
     max_lon=78.0,
@@ -37,10 +38,10 @@ large_roi = ga.create_bbox(
 )
 
 # Load land cover
-landcover = ga.load_dataset('ESA/WorldCover/v100')
+landcover = geeadvance.load_dataset('ESA/WorldCover/v100')
 
 # Download large area - automatically handles tiling!
-ga.download_large_area(
+geeadvance.download_large_area(
     image=landcover.select('Map'),
     region=large_roi,
     filename='large_landcover.tif',
@@ -56,7 +57,7 @@ ga.download_large_area(
 For very large areas, you can control the tile size:
 
 ```python
-ga.download_large_area(
+geeadvance.download_large_area(
     image=landcover,
     region=very_large_roi,
     filename='output.tif',
@@ -71,7 +72,7 @@ ga.download_large_area(
 Before downloading, estimate the size and get recommendations:
 
 ```python
-estimate = ga.estimate_download_size(
+estimate = geeadvance.estimate_download_size(
     image=landcover,
     region=large_roi,
     scale=100
@@ -96,14 +97,14 @@ Recommendation: Use tile_size=0.5
 
 ```python
 # Direct download works fine
-ga.download_large_area(image, small_roi, 'output.tif', scale=30)
+geeadvance.download_large_area(image, small_roi, 'output.tif', scale=30)
 ```
 
 ### Medium Areas (100-500 MB)
 
 ```python
 # Use default tiling
-ga.download_large_area(
+geeadvance.download_large_area(
     image, medium_roi, 'output.tif',
     scale=30,
     tile_size=1.0  # Default
@@ -114,7 +115,7 @@ ga.download_large_area(
 
 ```python
 # Use smaller tiles
-ga.download_large_area(
+geeadvance.download_large_area(
     image, large_roi, 'output.tif',
     scale=30,
     tile_size=0.5,
@@ -126,7 +127,7 @@ ga.download_large_area(
 
 ```python
 # Use very small tiles and more threads
-ga.download_large_area(
+geeadvance.download_large_area(
     image, huge_roi, 'output.tif',
     scale=30,
     tile_size=0.25,
@@ -140,7 +141,7 @@ Download all images in a collection:
 
 ```python
 # Load time series
-collection = ga.load_dataset(
+collection = geeadvance.load_dataset(
     'MODIS/006/MOD13A2',
     start_date='2020-01-01',
     end_date='2020-12-31',
@@ -148,7 +149,7 @@ collection = ga.load_dataset(
 )
 
 # Download all images
-files = ga.download_collection(
+files = geeadvance.download_collection(
     collection=collection,
     region=roi,
     output_dir='ndvi_timeseries',
@@ -165,15 +166,15 @@ print(f"Downloaded {len(files)} images")
 
 ```python
 # Higher scale = smaller file size
-ga.download_large_area(image, roi, 'output.tif', scale=500)  # Faster
-ga.download_large_area(image, roi, 'output.tif', scale=30)   # Slower but detailed
+geeadvance.download_large_area(image, roi, 'output.tif', scale=500)  # Faster
+geeadvance.download_large_area(image, roi, 'output.tif', scale=30)   # Slower but detailed
 ```
 
 ### 2. Optimize Thread Count
 
 ```python
 # More threads = faster download (up to a point)
-ga.download_large_area(
+geeadvance.download_large_area(
     image, roi, 'output.tif',
     num_threads=4   # Good for most systems
 )
@@ -183,7 +184,7 @@ ga.download_large_area(
 
 ```python
 # Use projected CRS for large areas
-ga.download_large_area(
+geeadvance.download_large_area(
     image, roi, 'output.tif',
     crs='EPSG:32643',  # UTM Zone 43N for India
     scale=30
@@ -199,7 +200,7 @@ ga.download_large_area(
 **Solution**: Reduce tile size further
 
 ```python
-ga.download_large_area(
+geeadvance.download_large_area(
     image, roi, 'output.tif',
     tile_size=0.1,  # Very small tiles
     num_threads=2   # Fewer parallel downloads
@@ -213,7 +214,7 @@ ga.download_large_area(
 **Solution**: Reduce threads and tile size
 
 ```python
-ga.download_large_area(
+geeadvance.download_large_area(
     image, roi, 'output.tif',
     tile_size=0.25,
     num_threads=2  # Less memory usage
@@ -227,7 +228,7 @@ ga.download_large_area(
 **Solution**: Increase threads and tile size
 
 ```python
-ga.download_large_area(
+geeadvance.download_large_area(
     image, roi, 'output.tif',
     tile_size=2.0,   # Larger tiles
     num_threads=12   # More parallelism
@@ -240,23 +241,24 @@ ga.download_large_area(
 |--------|----------|-------|------------|
 | `ee.batch.Export` | Limited | Slow | Manual |
 | `geemap.download` | Unlimited | Fast | Simple |
-| `ga.download_large_area` | Unlimited | Fast | Very Simple |
+| `geeadvance.download_large_area` | Unlimited | Fast | Very Simple |
 
 ## Complete Example
 
 ```python
-import geeadvance as ga
 import ee
+import geeadvance
 
 # Setup
-ga.quick_setup()
+ee.Authenticate()
+ee.Initialize(project='your-project-id')
 
 # Define study area (e.g., Western Ghats)
-study_area = ga.create_bbox(73.0, 8.0, 77.0, 12.0)
+study_area = geeadvance.create_bbox(73.0, 8.0, 77.0, 12.0)
 
 # Estimate size first
-landcover = ga.load_dataset('ESA/WorldCover/v100')
-estimate = ga.estimate_download_size(landcover, study_area, scale=100)
+landcover = geeadvance.load_dataset('ESA/WorldCover/v100')
+estimate = geeadvance.estimate_download_size(landcover, study_area, scale=100)
 
 print(f"Area: {estimate['area_km2']:.0f} km²")
 print(f"Size: {estimate['size_mb']:.1f} MB")
@@ -264,7 +266,7 @@ print(f"Recommendation: {estimate['recommendation']}")
 
 # Download with recommended settings
 if estimate['recommended_tile_size']:
-    ga.download_large_area(
+    geeadvance.download_large_area(
         landcover.select('Map'),
         study_area,
         'western_ghats_landcover.tif',
@@ -273,7 +275,7 @@ if estimate['recommended_tile_size']:
     )
 else:
     # Direct download for small areas
-    ga.download_large_area(
+    geeadvance.download_large_area(
         landcover.select('Map'),
         study_area,
         'western_ghats_landcover.tif',
