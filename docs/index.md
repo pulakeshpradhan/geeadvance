@@ -12,35 +12,35 @@
 
 </div>
 
+---
+
 ## Overview
 
 **GeeAdvance** is a comprehensive Python package that brings advanced landscape ecology metrics to Google Earth Engine. Inspired by the R [landscapemetrics](https://r-spatialecology.github.io/landscapemetrics/) package, it enables researchers, students, and practitioners to perform sophisticated spatial pattern analysis on GEE-derived imagery and datasets.
 
 ## Key Features
 
-### 🔐 **Seamless GEE Authentication**
+### 🔐 Seamless GEE Authentication
 
 Standard authentication methods that work across different environments (local, Colab, cloud).
 
-### 📊 **Comprehensive Landscape Metrics**
+### 📊 Comprehensive Landscape Metrics
 
 Implementation of metrics from the landscapemetrics R package:
 
 - **Area & Edge Metrics**: CA, PLAND, TE, ED
-- **Shape Metrics**: SHAPE, FRAC, PARA, CIRCLE
-- **Core Area Metrics**: TCA, CPLAND, CAI
-- **Aggregation Metrics**: AI, CLUMPY, COHESION, DIVISION
-- **Diversity Metrics**: SHDI, SHEI, SIDI
+- **Patch Metrics**: NP, AREA_MN
+- **Diversity Metrics**: SHDI
 
-### 🗺️ **Direct GEE Integration**
+### 🗺️ Direct GEE Integration
 
 Work directly with GEE ImageCollections and Images without downloading data first.
 
-### 📥 **Smart Downloads with Geemap**
+### 📥 Smart Downloads with Geemap
 
 Download large areas without size errors using automatic tiling and merging.
 
-### 📚 **Beginner-Friendly**
+### 📚 Beginner-Friendly
 
 Extensive tutorials and documentation designed for users new to GEE and landscape ecology.
 
@@ -50,7 +50,7 @@ Extensive tutorials and documentation designed for users new to GEE and landscap
 import ee
 import geeadvance
 
-# Authenticate and initialize
+# Initialize with your project ID
 geeadvance.initialize(project='spatialgeography')
 
 # Define region of interest
@@ -123,9 +123,9 @@ Assess wetland patch dynamics and connectivity.
 | **Learning Curve** | Beginner-friendly | Steep |
 | **Speed** | Cloud computing | Local processing |
 
-### Author
+## Author
 
-### Pulakesh Pradhan
+**Pulakesh Pradhan**
 
 - Email: [pulakesh.mid@gmail.com](mailto:pulakesh.mid@gmail.com)
 - GitHub: [@pulakeshpradhan](https://github.com/pulakeshpradhan)
@@ -148,16 +148,6 @@ If you use GeeAdvance in your research, please cite:
   url = {https://github.com/pulakeshpradhan/geeadvance}
 }
 ```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](about/license.md) file for details.
-
-## Support
-
-- 📖 [Documentation](https://pulakeshpradhan.github.io/geeadvance/)
-- 🐛 [Issue Tracker](https://github.com/pulakeshpradhan/geeadvance/issues)
-- 💬 [Discussions](https://github.com/pulakeshpradhan/geeadvance/discussions)
 
 ---
 

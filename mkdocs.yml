@@ -30,8 +30,10 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.expand
+    - navigation.indexes
     - navigation.top
     - navigation.footer
+    - toc.integrate
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -103,6 +105,7 @@ nav:
       - Urban Growth: examples/urban-growth.md
       - Wetland Analysis: examples/wetland-analysis.md
   - About:
+      - about/index.md
       - Contributing: about/contributing.md
       - License: about/license.md
       - Changelog: about/changelog.md
