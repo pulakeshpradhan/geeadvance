@@ -162,6 +162,7 @@ This project is licensed under the MIT License - see the [LICENSE](about/license
 ---
 
 <p align="center">Made with ❤️ for the landscape ecology community</p>
+<p align="center"><i>Made with <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a></i></p>
 
 <p align="center">
   <a href="getting-started/installation.md" class="md-button md-button--primary">Get Started</a>
