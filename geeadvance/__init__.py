@@ -12,6 +12,8 @@ __version__ = "0.1.0"
 __author__ = "Pulakesh Pradhan"
 __email__ = "pulakesh.mid@gmail.com"
 
+import ee
+
 # Import main modules
 from .auth import authenticate, initialize, is_authenticated
 from .datasets import load_dataset, list_datasets, get_dataset_info, get_landcover_classes
@@ -33,6 +35,8 @@ __all__ = [
     "__version__",
     "__author__",
     "__email__",
+    # GEE
+    "ee",
     # Authentication
     "authenticate",
     "initialize",

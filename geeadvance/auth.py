@@ -187,22 +187,23 @@ def get_auth_status() -> dict:
 # Convenience function for quick setup
 def quick_setup(project: Optional[str] = None) -> None:
     """
-    Quick setup: authenticate and initialize in one step.
+    Quick setup: authenticate and initialize using standard Earth Engine methods.
     
     Parameters
     ----------
     project : str, optional
-        GEE project ID.
+        GEE project ID. Required if you have multiple projects or a specific billing project.
     
     Examples
     --------
-    >>> import geeadvance as ga
-    >>> ga.quick_setup()
+    >>> import geeadvance
+    >>> geeadvance.quick_setup(project='your-project-id')
     ✓ Successfully authenticated with Google Earth Engine!
-    ✓ Google Earth Engine initialized successfully!
+    ✓ Google Earth Engine initialized with project: your-project-id
     """
     if not is_authenticated():
-        authenticate()
-        initialize(project=project)
+        # Standard GEE calls
+        ee.Authenticate()
+        ee.Initialize(project=project)
     else:
         print("✓ Already authenticated and initialized!")

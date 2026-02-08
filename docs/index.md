@@ -47,23 +47,24 @@ Extensive tutorials and documentation designed for users new to GEE and landscap
 ## Quick Example
 
 ```python
-import geeadvance as ga
 import ee
+import geeadvance
 
 # Authenticate and initialize
-ga.quick_setup()
+ee.Authenticate()
+ee.Initialize(project='your-project-id')
 
 # Define region of interest
-roi = ga.create_bbox(77.0, 20.0, 78.0, 21.0)
+roi = geeadvance.create_bbox(77.0, 20.0, 78.0, 21.0)
 
 # Load land cover data
-landcover = ga.load_dataset('ESA/WorldCover/v100', region=roi)
+landcover = geeadvance.load_dataset('ESA/WorldCover/v100', region=roi)
 
 # Calculate landscape metrics
-metrics = ga.calculate_metrics(landcover, roi, scale=100)
+metrics = geeadvance.calculate_metrics(landcover, roi, scale=100)
 
 # Download large area (with automatic tiling)
-ga.download_large_area(
+geeadvance.download_large_area(
     landcover,
     roi,
     'landcover.tif',

@@ -38,31 +38,32 @@ pip install -e .
 ### 1. Authenticate with Google Earth Engine
 
 ```python
-import geeadvance as ga
+import ee
+import geeadvance
 
-# Initialize GEE authentication
-ga.authenticate()
-ga.initialize()
+# Standard GEE authentication
+ee.Authenticate()
+ee.Initialize(project='your-project-id')
 ```
 
 ### 2. Calculate Landscape Metrics
 
 ```python
 # Load a land cover dataset
-dataset = ga.load_dataset('MODIS/006/MCD12Q1', 
-                          start_date='2020-01-01',
-                          end_date='2020-12-31')
+dataset = geeadvance.load_dataset('MODIS/006/MCD12Q1', 
+                                  start_date='2020-01-01',
+                                  end_date='2020-12-31')
 
 # Define region of interest
 roi = ee.Geometry.Rectangle([77.0, 20.0, 78.0, 21.0])
 
 # Calculate landscape metrics
-metrics = ga.calculate_metrics(dataset, roi, scale=500)
+metrics = geeadvance.calculate_metrics(dataset, roi, scale=500)
 
 # Get specific metrics
-area_metrics = ga.area_metrics(dataset, roi)
-shape_metrics = ga.shape_metrics(dataset, roi)
-diversity_metrics = ga.diversity_metrics(dataset, roi)
+area_metrics = geeadvance.area_metrics(dataset, roi)
+shape_metrics = geeadvance.shape_metrics(dataset, roi)
+diversity_metrics = geeadvance.diversity_metrics(dataset, roi)
 
 print(metrics)
 ```
@@ -71,7 +72,7 @@ print(metrics)
 
 ```python
 # Export as GeoTIFF
-ga.export_tif(dataset, roi, 'output_landcover.tif')
+geeadvance.export_tif(dataset, roi, 'output_landcover.tif')
 
 # Export metrics as CSV
 metrics.to_csv('landscape_metrics.csv')
@@ -96,29 +97,34 @@ Check out our beginner-friendly tutorials:
 ## 🌟 Implemented Metrics
 
 ### Area & Edge Metrics
+
 - **CA** - Class Area
 - **PLAND** - Percentage of Landscape
 - **TE** - Total Edge
 - **ED** - Edge Density
 
 ### Shape Metrics
+
 - **SHAPE** - Shape Index
 - **FRAC** - Fractal Dimension
 - **PARA** - Perimeter-Area Ratio
 - **CIRCLE** - Related Circumscribing Circle
 
 ### Core Area Metrics
+
 - **TCA** - Total Core Area
 - **CPLAND** - Core Area Percentage of Landscape
 - **CAI** - Core Area Index
 
 ### Aggregation Metrics
+
 - **AI** - Aggregation Index
 - **CLUMPY** - Clumpiness Index
 - **COHESION** - Patch Cohesion Index
 - **DIVISION** - Landscape Division Index
 
 ### Diversity Metrics
+
 - **SHDI** - Shannon's Diversity Index
 - **SHEI** - Shannon's Evenness Index
 - **SIDI** - Simpson's Diversity Index
@@ -134,7 +140,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👤 Author
 
 **Pulakesh Pradhan**
-- Email: pulakesh.mid@gmail.com
+
+- Email: <pulakesh.mid@gmail.com>
 - GitHub: [@pulakeshpradhan](https://github.com/pulakeshpradhan)
 
 ## 🙏 Acknowledgments
