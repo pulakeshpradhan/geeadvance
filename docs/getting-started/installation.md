@@ -69,13 +69,13 @@ pip install geeadvance
 ## Step 4: Verify Installation
 
 ```python
-import geeadvance as ga
-print(f"GeeAdvance version: {ga.__version__}")
+import geeadvance
+print(f"GeeAdvance version: {geeadvance.__version__}")
 ```
 
 Expected output:
 
-```
+```text
 GeeAdvance version: 0.1.0
 ```
 
@@ -136,7 +136,7 @@ pip install --user geeadvance
 ## System Requirements
 
 | Component | Minimum | Recommended |
-|-----------|---------|-------------|
+| :--- | :--- | :--- |
 | Python | 3.8 | 3.10+ |
 | RAM | 4 GB | 8 GB+ |
 | Disk Space | 500 MB | 2 GB+ |

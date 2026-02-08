@@ -57,13 +57,8 @@ dataset = geeadvance.load_dataset('MODIS/006/MCD12Q1',
 # Define region of interest
 roi = ee.Geometry.Rectangle([77.0, 20.0, 78.0, 21.0])
 
-# Calculate landscape metrics
-metrics = geeadvance.calculate_metrics(dataset, roi, scale=500)
-
-# Get specific metrics
-area_metrics = geeadvance.area_metrics(dataset, roi)
-shape_metrics = geeadvance.shape_metrics(dataset, roi)
-diversity_metrics = geeadvance.diversity_metrics(dataset, roi)
+# Calculate landscape metrics (automates download and local processing)
+metrics = geeadvance.calculate_metrics(dataset.select('LC_Type1'), roi, scale=500)
 
 print(metrics)
 ```
@@ -94,40 +89,15 @@ Check out our beginner-friendly tutorials:
 6. [Exporting Data and Results](tutorials/06_exporting_data.ipynb)
 7. [Complete Workflow Example](tutorials/07_complete_workflow.ipynb)
 
-## 🌟 Implemented Metrics
-
-### Area & Edge Metrics
+### Available Metrics (Local Engine)
 
 - **CA** - Class Area
 - **PLAND** - Percentage of Landscape
+- **NP** - Number of Patches
+- **AREA_MN** - Mean Patch Area
 - **TE** - Total Edge
 - **ED** - Edge Density
-
-### Shape Metrics
-
-- **SHAPE** - Shape Index
-- **FRAC** - Fractal Dimension
-- **PARA** - Perimeter-Area Ratio
-- **CIRCLE** - Related Circumscribing Circle
-
-### Core Area Metrics
-
-- **TCA** - Total Core Area
-- **CPLAND** - Core Area Percentage of Landscape
-- **CAI** - Core Area Index
-
-### Aggregation Metrics
-
-- **AI** - Aggregation Index
-- **CLUMPY** - Clumpiness Index
-- **COHESION** - Patch Cohesion Index
-- **DIVISION** - Landscape Division Index
-
-### Diversity Metrics
-
-- **SHDI** - Shannon's Diversity Index
-- **SHEI** - Shannon's Evenness Index
-- **SIDI** - Simpson's Diversity Index
+- **SHDI** - Shannon's Diversity Index (Landscape level)
 
 ## 🤝 Contributing
 
@@ -139,7 +109,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👤 Author
 
-**Pulakesh Pradhan**
+### Pulakesh Pradhan
 
 - Email: <pulakesh.mid@gmail.com>
 - GitHub: [@pulakeshpradhan](https://github.com/pulakeshpradhan)

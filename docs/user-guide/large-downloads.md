@@ -85,7 +85,7 @@ print(f"Recommendation: {estimate['recommendation']}")
 
 **Example output:**
 
-```
+```text
 Estimated size: 1250.5 MB
 Pixel count: 327,680,000
 Recommendation: Use tile_size=0.5
@@ -238,7 +238,7 @@ geeadvance.download_large_area(
 ## Comparison with Standard Export
 
 | Method | Max Size | Speed | Complexity |
-|--------|----------|-------|------------|
+| :--- | :--- | :--- | :--- |
 | `ee.batch.Export` | Limited | Slow | Manual |
 | `geemap.download` | Unlimited | Fast | Simple |
 | `geeadvance.download_large_area` | Unlimited | Fast | Very Simple |

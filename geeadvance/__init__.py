@@ -19,6 +19,7 @@ from .auth import authenticate, initialize, is_authenticated
 from .datasets import load_dataset, list_datasets, get_dataset_info, get_landcover_classes
 from .metrics import (
     calculate_metrics,
+    calculate_local_metrics,
     area_metrics,
     edge_metrics,
     shape_metrics,
@@ -48,6 +49,7 @@ __all__ = [
     "get_landcover_classes",
     # Metrics
     "calculate_metrics",
+    "calculate_local_metrics",
     "area_metrics",
     "edge_metrics",
     "shape_metrics",

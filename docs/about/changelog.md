@@ -12,14 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of GeeAdvance
 - Standard GEE authentication module with multiple auth modes
 - Comprehensive dataset loading and management
-- Landscape metrics implementation:
-  - Area and Edge metrics
-  - Shape metrics
-  - Core area metrics
-  - Aggregation metrics
-  - Diversity metrics
-- Export functionality to GeoTIFF, GeoJSON, Drive, and Assets
-- **Large area download support with geemap tiling**
+- **New Local Metrics Engine**: Implemented `calculate_metrics` with local raster processing
+  - Automates GEE image download and local analysis
+  - High-fidelity patch-based metrics using `rasterio` and `scipy.ndimage`
+  - Support for `CA`, `PLAND`, `NP`, `AREA_MN`, `TE`, `ED`, and `SHDI`
 - Automatic tiling and merging for areas exceeding GEE size limits
 - Download size estimation and recommendations
 - Utility functions for common GEE operations

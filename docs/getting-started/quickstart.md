@@ -85,28 +85,27 @@ Map
 Here's a complete workflow:
 
 ```python
-import geeadvance as ga
 import ee
+import geeadvance
 import geemap
 
 # Setup
-ga.quick_setup()
+geeadvance.initialize(project='spatialgeography')
 
 # Define study area
-study_area = ga.create_bbox(75.0, 12.0, 76.0, 13.0)
+study_area = geeadvance.create_bbox(75.0, 12.0, 76.0, 13.0)
 
 # Load data
-lc = ga.load_dataset('ESA/WorldCover/v100', region=study_area)
+lc = geeadvance.load_dataset('ESA/WorldCover/v100', region=study_area)
 
-# Calculate metrics
-area_metrics = ga.area_metrics(lc.select('Map'), study_area, scale=100)
-diversity_metrics = ga.diversity_metrics(lc.select('Map'), study_area, scale=100)
+# Calculate metrics (local engine)
+metrics = geeadvance.calculate_metrics(lc.select('Map'), study_area, scale=100)
 
-print("Area Metrics:", area_metrics)
-print("Diversity Metrics:", diversity_metrics)
+print("Landscape Metrics:")
+print(metrics)
 
 # Download
-ga.download_large_area(
+geeadvance.download_large_area(
     lc.select('Map'),
     study_area,
     'landcover_output.tif',
@@ -124,13 +123,13 @@ Map
 
 ```python
 # MODIS Land Cover
-modis_lc = ga.load_dataset('MODIS/006/MCD12Q1')
+modis_lc = geeadvance.load_dataset('MODIS/006/MCD12Q1')
 
 # ESA WorldCover
-esa_lc = ga.load_dataset('ESA/WorldCover/v100')
+esa_lc = geeadvance.load_dataset('ESA/WorldCover/v100')
 
 # Sentinel-2
-s2 = ga.load_dataset(
+s2 = geeadvance.load_dataset(
     'COPERNICUS/S2_SR',
     start_date='2020-01-01',
     end_date='2020-12-31',
@@ -138,7 +137,7 @@ s2 = ga.load_dataset(
 )
 
 # SRTM Elevation
-dem = ga.load_dataset('USGS/SRTMGL1_003')
+dem = geeadvance.load_dataset('USGS/SRTMGL1_003')
 ```
 
 ## Next Steps
@@ -207,16 +206,16 @@ Map
 
 ```python
 # Check authentication status
-if not ga.is_authenticated():
-    ga.authenticate()
-    ga.initialize()
+if not geeadvance.is_authenticated():
+    geeadvance.authenticate()
+    geeadvance.initialize()
 ```
 
 ### Download Fails
 
 ```python
 # Use smaller tiles for large areas
-ga.download_large_area(
+geeadvance.download_large_area(
     image, roi, 'output.tif',
     tile_size=0.5,  # Smaller tiles
     num_threads=4
@@ -227,7 +226,7 @@ ga.download_large_area(
 
 ```python
 # Reduce scale and threads
-ga.download_large_area(
+geeadvance.download_large_area(
     image, roi, 'output.tif',
     scale=500,      # Coarser resolution
     num_threads=2   # Fewer threads
