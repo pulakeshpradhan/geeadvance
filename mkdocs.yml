@@ -1,0 +1,119 @@
+site_name: GeeAdvance Documentation
+site_description: Advanced landscape metrics analysis using Google Earth Engine
+site_author: Pulakesh Pradhan
+site_url: https://pulakeshpradhan.github.io/geeadvance/
+
+repo_name: pulakeshpradhan/geeadvance
+repo_url: https://github.com/pulakeshpradhan/geeadvance
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+  - mkdocs-jupyter:
+      include_source: True
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+      - Authentication: getting-started/authentication.md
+  - Tutorials:
+      - 1. Authentication: tutorials/01_authentication.ipynb
+      - 2. Loading Data: tutorials/02_loading_data.md
+      - 3. Area & Edge Metrics: tutorials/03_area_edge_metrics.md
+      - 4. Shape & Core Metrics: tutorials/04_shape_core_metrics.md
+      - 5. Aggregation & Diversity: tutorials/05_aggregation_diversity.md
+      - 6. Exporting Data: tutorials/06_exporting_data.md
+      - 7. Complete Workflow: tutorials/07_complete_workflow.ipynb
+  - User Guide:
+      - Landscape Metrics: user-guide/landscape-metrics.md
+      - Datasets: user-guide/datasets.md
+      - Large Area Downloads: user-guide/large-downloads.md
+      - Export Options: user-guide/export-options.md
+      - Visualization: user-guide/visualization.md
+  - API Reference:
+      - Authentication: api/auth.md
+      - Datasets: api/datasets.md
+      - Metrics: api/metrics.md
+      - Export: api/export.md
+      - Download: api/download.md
+      - Utilities: api/utils.md
+  - Examples:
+      - Forest Fragmentation: examples/forest-fragmentation.md
+      - Urban Growth: examples/urban-growth.md
+      - Wetland Analysis: examples/wetland-analysis.md
+  - About:
+      - Contributing: about/contributing.md
+      - License: about/license.md
+      - Changelog: about/changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/pulakeshpradhan
+    - icon: fontawesome/solid/envelope
+      link: mailto:pulakesh.mid@gmail.com
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX
+
+copyright: Copyright &copy; 2026 Pulakesh Pradhan
