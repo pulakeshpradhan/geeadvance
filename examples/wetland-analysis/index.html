@@ -92,7 +92,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wetland-analysis-example" class="md-skip">
+        <a href="#example-wetland-connectivity-analysis" class="md-skip">
           Skip to content
         </a>
       
@@ -1405,6 +1405,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wetland Analysis
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1421,6 +1439,58 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-define-wetland-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Define Wetland Region
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-connectivity-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Connectivity Metrics
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1599,6 +1669,47 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-define-wetland-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Define Wetland Region
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-connectivity-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Connectivity Metrics
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1617,8 +1728,29 @@
   
 
 
-<h1 id="wetland-analysis-example">Wetland Analysis Example<a class="headerlink" href="#wetland-analysis-example" title="Permanent link">&para;</a></h1>
-<p><em>Under construction.</em></p>
+<h1 id="example-wetland-connectivity-analysis">Example: Wetland Connectivity Analysis<a class="headerlink" href="#example-wetland-connectivity-analysis" title="Permanent link">&para;</a></h1>
+<p>This example demonstrates how to evaluate the connectivity and aggregation of herbaceous wetlands using the ESA WorldCover dataset.</p>
+<h2 id="1-setup">1. Setup<a class="headerlink" href="#1-setup" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">ee</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">geeadvance</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">geeadvance</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="s1">&#39;spatialgeography&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="2-define-wetland-region">2. Define Wetland Region<a class="headerlink" href="#2-define-wetland-region" title="Permanent link">&para;</a></h2>
+<p>We will focus on the Chilika Lake region in Odisha, India.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">roi</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">create_bbox</span><span class="p">(</span><span class="mf">85.0</span><span class="p">,</span> <span class="mf">19.5</span><span class="p">,</span> <span class="mf">85.6</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">landcover</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;ESA/WorldCover/v100&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">roi</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Herbaceous wetland is class 90</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">wetlands</span> <span class="o">=</span> <span class="n">landcover</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;Map&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="3-connectivity-metrics">3. Connectivity Metrics<a class="headerlink" href="#3-connectivity-metrics" title="Permanent link">&para;</a></h2>
+<p>For wetlands, metrics like <strong>AREA_MN</strong> (Mean Patch Area) and <strong>ED</strong> (Edge Density) are vital indicators of habitat health.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">metrics</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">calculate_metrics</span><span class="p">(</span><span class="n">wetlands</span><span class="p">,</span> <span class="n">roi</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><em>Note: This is a simplified example. For professional wetland analysis, consider integrating seasonal surface water data from the JRC Global Surface Water dataset.</em></p>
 
 
 

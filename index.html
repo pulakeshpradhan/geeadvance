@@ -667,9 +667,10 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="Why GeeAdvance?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#author" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -677,6 +678,22 @@
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pulakesh-pradhan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pulakesh Pradhan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2066,9 +2083,10 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="Why GeeAdvance?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#author" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2076,6 +2094,22 @@
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pulakesh-pradhan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pulakesh Pradhan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2148,7 +2182,7 @@
 
 ![GeeAdvance Logo](assets/logo.png)
 
-**Advanced Landscape Metrics for Google Earth Engine**
+## Advanced Landscape Metrics for Google Earth Engine
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/pulakeshpradhan/geeadvance/blob/main/LICENSE)
@@ -2181,27 +2215,26 @@
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">geeadvance</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Authenticate and initialize</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">ee</span><span class="o">.</span><span class="n">Authenticate</span><span class="p">()</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">ee</span><span class="o">.</span><span class="n">Initialize</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="s1">&#39;your-project-id&#39;</span><span class="p">)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Define region of interest</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">roi</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">create_bbox</span><span class="p">(</span><span class="mf">77.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">78.0</span><span class="p">,</span> <span class="mf">21.0</span><span class="p">)</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Load land cover data</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">landcover</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;ESA/WorldCover/v100&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">roi</span><span class="p">)</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1"># Calculate landscape metrics</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="n">metrics</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">calculate_metrics</span><span class="p">(</span><span class="n">landcover</span><span class="p">,</span> <span class="n">roi</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1"># Download large area (with automatic tiling)</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">geeadvance</span><span class="o">.</span><span class="n">download_large_area</span><span class="p">(</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">landcover</span><span class="p">,</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">roi</span><span class="p">,</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="s1">&#39;landcover.tif&#39;</span><span class="p">,</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="n">scale</span><span class="o">=</span><span class="mi">100</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="p">)</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="nb">print</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">geeadvance</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="s1">&#39;spatialgeography&#39;</span><span class="p">)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Define region of interest</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">roi</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">create_bbox</span><span class="p">(</span><span class="mf">77.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">78.0</span><span class="p">,</span> <span class="mf">21.0</span><span class="p">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Load land cover data</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">landcover</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;ESA/WorldCover/v100&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">roi</span><span class="p">)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># Calculate landscape metrics</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">metrics</span> <span class="o">=</span> <span class="n">geeadvance</span><span class="o">.</span><span class="n">calculate_metrics</span><span class="p">(</span><span class="n">landcover</span><span class="p">,</span> <span class="n">roi</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1"># Download large area (with automatic tiling)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">geeadvance</span><span class="o">.</span><span class="n">download_large_area</span><span class="p">(</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">landcover</span><span class="p">,</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">roi</span><span class="p">,</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="s1">&#39;landcover.tif&#39;</span><span class="p">,</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">scale</span><span class="o">=</span><span class="mi">100</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">)</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="nb">print</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>geeadvance
@@ -2232,41 +2265,41 @@
 <table>
 <thead>
 <tr>
-<th>Feature</th>
-<th>GeeAdvance</th>
-<th>Traditional Approach</th>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">GeeAdvance</th>
+<th style="text-align: left;">Traditional Approach</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Data Access</strong></td>
-<td>Direct GEE integration</td>
-<td>Manual download required</td>
+<td style="text-align: left;"><strong>Data Access</strong></td>
+<td style="text-align: left;">Direct GEE integration</td>
+<td style="text-align: left;">Manual download required</td>
 </tr>
 <tr>
-<td><strong>Large Areas</strong></td>
-<td>Automatic tiling</td>
-<td>Size limitations</td>
+<td style="text-align: left;"><strong>Large Areas</strong></td>
+<td style="text-align: left;">Automatic tiling</td>
+<td style="text-align: left;">Size limitations</td>
 </tr>
 <tr>
-<td><strong>Metrics</strong></td>
-<td>30+ landscape metrics</td>
-<td>Manual calculation</td>
+<td style="text-align: left;"><strong>Metrics</strong></td>
+<td style="text-align: left;">30+ landscape metrics</td>
+<td style="text-align: left;">Manual calculation</td>
 </tr>
 <tr>
-<td><strong>Learning Curve</strong></td>
-<td>Beginner-friendly</td>
-<td>Steep</td>
+<td style="text-align: left;"><strong>Learning Curve</strong></td>
+<td style="text-align: left;">Beginner-friendly</td>
+<td style="text-align: left;">Steep</td>
 </tr>
 <tr>
-<td><strong>Speed</strong></td>
-<td>Cloud computing</td>
-<td>Local processing</td>
+<td style="text-align: left;"><strong>Speed</strong></td>
+<td style="text-align: left;">Cloud computing</td>
+<td style="text-align: left;">Local processing</td>
 </tr>
 </tbody>
 </table>
-<h2 id="author">Author<a class="headerlink" href="#author" title="Permanent link">&para;</a></h2>
-<p><strong>Pulakesh Pradhan</strong></p>
+<h3 id="author">Author<a class="headerlink" href="#author" title="Permanent link">&para;</a></h3>
+<h3 id="pulakesh-pradhan">Pulakesh Pradhan<a class="headerlink" href="#pulakesh-pradhan" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Email: <a href="mailto:pulakesh.mid@gmail.com">pulakesh.mid@gmail.com</a></li>
 <li>GitHub: <a href="https://github.com/pulakeshpradhan">@pulakeshpradhan</a></li>
@@ -2295,14 +2328,12 @@
 <li>💬 <a href="https://github.com/pulakeshpradhan/geeadvance/discussions">Discussions</a></li>
 </ul>
 <hr />
-<div align="center">
+<p align="center">Made with ❤️ for the landscape ecology community</p>
 
-**Made with ❤️ for the landscape ecology community**
-
-[Get Started](getting-started/installation.md){ .md-button .md-button--primary }
-[View on GitHub](https://github.com/pulakeshpradhan/geeadvance){ .md-button }
-
-</div>
+<p align="center">
+  <a href="getting-started/installation.md" class="md-button md-button--primary">Get Started</a>
+  <a href="https://github.com/pulakeshpradhan/geeadvance" class="md-button">View on GitHub</a>
+</p>
 
 
 
