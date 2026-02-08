@@ -30,13 +30,18 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev g++
+          sudo apt-get install -y libgdal-dev g++ pandoc
           
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
-          pip install --upgrade pip
-          pip install mkdocs mkdocs-material "mkdocstrings[python]" mkdocs-jupyter
-          pip install -e .
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install mkdocs mkdocs-material "mkdocstrings[python]" mkdocs-jupyter
+          python -m pip install -e .
+          
+      - name: Verify installation
+        run: |
+          python -c "import geeadvance; print(f'GeeAdvance {geeadvance.__version__} installed successfully')"
+          mkdocs --version
           
       - name: Build documentation
         run: mkdocs build
