@@ -27,10 +27,15 @@ jobs:
         with:
           python-version: '3.10'
           
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgdal-dev g++
+          
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install mkdocs mkdocs-material mkdocstrings mkdocs-jupyter
+          pip install mkdocs mkdocs-material "mkdocstrings[python]" mkdocs-jupyter
           pip install -e .
           
       - name: Build documentation
