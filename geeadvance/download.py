@@ -59,14 +59,18 @@ def download_large_area(
     
     Examples
     --------
-    >>> import geeadvance as ga
     >>> import ee
+    >>> import geeadvance
+    >>> 
+    >>> # Standard GEE authentication and initialization
+    >>> ee.Authenticate()
+    >>> ee.Initialize(project='your-project-id')
     >>> 
     >>> # Download large area (e.g., entire state)
-    >>> large_roi = ga.create_bbox(75.0, 12.0, 78.0, 15.0)
-    >>> lc = ga.load_dataset('ESA/WorldCover/v100')
+    >>> large_roi = geeadvance.create_bbox(75.0, 12.0, 78.0, 15.0)
+    >>> lc = geeadvance.load_dataset('ESA/WorldCover/v100')
     >>> 
-    >>> ga.download_large_area(
+    >>> geeadvance.download_large_area(
     ...     lc.select('Map'),
     ...     large_roi,
     ...     'large_landcover.tif',
@@ -250,10 +254,10 @@ def download_collection(
     
     Examples
     --------
-    >>> collection = ga.load_dataset('MODIS/006/MOD13A2',
-    ...                              start_date='2020-01-01',
-    ...                              end_date='2020-03-31')
-    >>> files = ga.download_collection(collection, roi, 'outputs')
+    >>> collection = geeadvance.load_dataset('MODIS/006/MOD13A2',
+    ...                                      start_date='2020-01-01',
+    ...                                      end_date='2020-03-31')
+    >>> files = geeadvance.download_collection(collection, roi, 'outputs')
     """
     os.makedirs(output_dir, exist_ok=True)
     
@@ -318,7 +322,7 @@ def download_with_geemap_map(
     --------
     >>> Map = geemap.Map()
     >>> Map.addLayer(image, {}, 'My Layer')
-    >>> ga.download_with_geemap_map(Map, 'My Layer', 'output.tif')
+    >>> geeadvance.download_with_geemap_map(Map, 'My Layer', 'output.tif')
     """
     # Get the layer
     layers = Map.ee_layers
@@ -369,7 +373,7 @@ def estimate_download_size(
     
     Examples
     --------
-    >>> estimate = ga.estimate_download_size(image, large_roi, scale=100)
+    >>> estimate = geeadvance.estimate_download_size(image, large_roi, scale=100)
     >>> print(f"Estimated size: {estimate['size_mb']} MB")
     >>> print(f"Recommended tile size: {estimate['recommended_tile_size']}")
     """

@@ -31,11 +31,11 @@ def authenticate(auth_mode: str = "notebook") -> None:
     
     Examples
     --------
-    >>> import geeadvance as ga
-    >>> ga.authenticate()
+    >>> import geeadvance
+    >>> geeadvance.authenticate()
     Successfully authenticated with Google Earth Engine!
     
-    >>> ga.authenticate(auth_mode='colab')
+    >>> geeadvance.authenticate(auth_mode='colab')
     Authenticated for Google Colab environment!
     """
     try:
@@ -94,11 +94,11 @@ def initialize(project: Optional[str] = None, opt_url: Optional[str] = None) -> 
     
     Examples
     --------
-    >>> import geeadvance as ga
-    >>> ga.initialize()
+    >>> import geeadvance
+    >>> geeadvance.initialize()
     ✓ Google Earth Engine initialized successfully!
     
-    >>> ga.initialize(project='my-gee-project')
+    >>> geeadvance.initialize(project='my-gee-project')
     ✓ Google Earth Engine initialized with project: my-gee-project
     """
     try:
@@ -111,7 +111,7 @@ def initialize(project: Optional[str] = None, opt_url: Optional[str] = None) -> 
             
     except Exception as e:
         print(f"✗ Initialization failed: {str(e)}", file=sys.stderr)
-        print("\nMake sure you have authenticated first using ga.authenticate()", file=sys.stderr)
+        print("\nMake sure you have authenticated first using geeadvance.authenticate()", file=sys.stderr)
         raise
 
 
@@ -126,12 +126,12 @@ def is_authenticated() -> bool:
     
     Examples
     --------
-    >>> import geeadvance as ga
-    >>> ga.is_authenticated()
+    >>> import geeadvance
+    >>> geeadvance.is_authenticated()
     False
-    >>> ga.authenticate()
-    >>> ga.initialize()
-    >>> ga.is_authenticated()
+    >>> geeadvance.authenticate()
+    >>> geeadvance.initialize()
+    >>> geeadvance.is_authenticated()
     True
     """
     try:
@@ -153,8 +153,8 @@ def get_auth_status() -> dict:
     
     Examples
     --------
-    >>> import geeadvance as ga
-    >>> status = ga.get_auth_status()
+    >>> import geeadvance
+    >>> status = geeadvance.get_auth_status()
     >>> print(status)
     {'authenticated': True, 'project': 'my-project', 'user': 'user@example.com'}
     """

@@ -54,12 +54,16 @@ def export_tif(
     
     Examples
     --------
-    >>> import geeadvance as ga
     >>> import ee
+    >>> import geeadvance
     >>> 
-    >>> lc = ga.load_dataset('MODIS/006/MCD12Q1')
+    >>> # Standard GEE authentication and initialization
+    >>> ee.Authenticate()
+    >>> ee.Initialize(project='your-project-id')
+    >>> 
+    >>> lc = geeadvance.load_dataset('MODIS/006/MCD12Q1')
     >>> roi = ee.Geometry.Rectangle([77.0, 20.0, 78.0, 21.0])
-    >>> task_id = ga.export_tif(lc, roi, 'landcover_2020', scale=500)
+    >>> task_id = geeadvance.export_tif(lc, roi, 'landcover_2020', scale=500)
     >>> print(f"Export started: {task_id}")
     """
     # Create export task
@@ -110,7 +114,7 @@ def export_geojson(
     Examples
     --------
     >>> features = ee.FeatureCollection('TIGER/2018/States')
-    >>> task_id = ga.export_geojson(features, 'us_states')
+    >>> task_id = geeadvance.export_geojson(features, 'us_states')
     """
     task = ee.batch.Export.table.toDrive(
         collection=feature_collection,
@@ -161,7 +165,7 @@ def export_to_asset(
     
     Examples
     --------
-    >>> task_id = ga.export_to_asset(image, 'users/myuser/landcover', roi)
+    >>> task_id = geeadvance.export_to_asset(image, 'users/myuser/landcover', roi)
     """
     task = ee.batch.Export.image.toAsset(
         image=image,
@@ -214,7 +218,7 @@ def export_to_drive(
     
     Examples
     --------
-    >>> task_id = ga.export_to_drive(ndvi_image, 'ndvi_2020', region=roi)
+    >>> task_id = geeadvance.export_to_drive(ndvi_image, 'ndvi_2020', region=roi)
     """
     return export_tif(image, region, description, scale, crs, folder)
 
@@ -235,7 +239,7 @@ def check_task_status(task_id: str) -> Dict:
     
     Examples
     --------
-    >>> status = ga.check_task_status(task_id)
+    >>> status = geeadvance.check_task_status(task_id)
     >>> print(f"Status: {status['state']}")
     """
     tasks = ee.batch.Task.list()
@@ -272,8 +276,8 @@ def wait_for_task(task_id: str, timeout: int = 3600, check_interval: int = 30) -
     
     Examples
     --------
-    >>> task_id = ga.export_tif(image, roi, 'output')
-    >>> success = ga.wait_for_task(task_id)
+    >>> task_id = geeadvance.export_tif(image, roi, 'output')
+    >>> success = geeadvance.wait_for_task(task_id)
     >>> if success:
     ...     print("Export completed!")
     """
@@ -332,7 +336,7 @@ def download_image(
     
     Examples
     --------
-    >>> url = ga.download_image(small_image, small_roi, 'output.tif')
+    >>> url = geeadvance.download_image(small_image, small_roi, 'output.tif')
     >>> print(f"Download from: {url}")
     """
     url = image.getDownloadURL({
@@ -379,7 +383,7 @@ def batch_export(
     
     Examples
     --------
-    >>> task_ids = ga.batch_export(
+    >>> task_ids = geeadvance.batch_export(
     ...     images=[img1, img2, img3],
     ...     regions=[roi1, roi2, roi3],
     ...     filenames=['out1', 'out2', 'out3']

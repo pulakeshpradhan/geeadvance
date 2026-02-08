@@ -45,12 +45,16 @@ def calculate_metrics(
     
     Examples
     --------
-    >>> import geeadvance as ga
     >>> import ee
+    >>> import geeadvance
     >>> 
-    >>> lc = ga.load_dataset('MODIS/006/MCD12Q1')
+    >>> # Standard GEE authentication and initialization
+    >>> ee.Authenticate()
+    >>> ee.Initialize(project='your-project-id')
+    >>> 
+    >>> lc = geeadvance.load_dataset('MODIS/006/MCD12Q1')
     >>> roi = ee.Geometry.Rectangle([77.0, 20.0, 78.0, 21.0])
-    >>> metrics = ga.calculate_metrics(lc, roi, scale=500)
+    >>> metrics = geeadvance.calculate_metrics(lc, roi, scale=500)
     >>> print(metrics)
     """
     if class_band is None:
@@ -112,7 +116,7 @@ def area_metrics(
     
     Examples
     --------
-    >>> metrics = ga.area_metrics(landcover_image, roi, scale=500)
+    >>> metrics = geeadvance.area_metrics(landcover_image, roi, scale=500)
     >>> print(f"Total Area: {metrics['TA']} ha")
     """
     # Get pixel area
@@ -180,7 +184,7 @@ def edge_metrics(
     
     Examples
     --------
-    >>> metrics = ga.edge_metrics(landcover_image, roi)
+    >>> metrics = geeadvance.edge_metrics(landcover_image, roi)
     >>> print(f"Edge Density: {metrics['ED']} m/ha")
     """
     # Calculate edges using convolution
@@ -247,7 +251,7 @@ def shape_metrics(
     
     Examples
     --------
-    >>> metrics = ga.shape_metrics(landcover_image, roi)
+    >>> metrics = geeadvance.shape_metrics(landcover_image, roi)
     >>> print(f"Mean Shape Index: {metrics['SHAPE_MN']}")
     """
     metrics = {
@@ -294,7 +298,7 @@ def core_metrics(
     
     Examples
     --------
-    >>> metrics = ga.core_metrics(landcover_image, roi, edge_depth=2)
+    >>> metrics = geeadvance.core_metrics(landcover_image, roi, edge_depth=2)
     >>> print(f"Total Core Area: {metrics['TCA']} ha")
     """
     # Calculate core areas by eroding patches
@@ -343,7 +347,7 @@ def aggregation_metrics(
     
     Examples
     --------
-    >>> metrics = ga.aggregation_metrics(landcover_image, roi)
+    >>> metrics = geeadvance.aggregation_metrics(landcover_image, roi)
     >>> print(f"Aggregation Index: {metrics['AI']}")
     """
     metrics = {
@@ -391,7 +395,7 @@ def diversity_metrics(
     
     Examples
     --------
-    >>> metrics = ga.diversity_metrics(landcover_image, roi)
+    >>> metrics = geeadvance.diversity_metrics(landcover_image, roi)
     >>> print(f"Shannon Diversity: {metrics['SHDI']}")
     """
     # Get class proportions
@@ -445,7 +449,7 @@ def patch_metrics(
     
     Examples
     --------
-    >>> patches = ga.patch_metrics(landcover_image, roi)
+    >>> patches = geeadvance.patch_metrics(landcover_image, roi)
     >>> # Export or visualize patches
     """
     # Use connected components to identify patches
@@ -485,7 +489,7 @@ def calculate_class_metrics(
     Examples
     --------
     >>> # Calculate metrics for forest class (value = 1)
-    >>> forest_metrics = ga.calculate_class_metrics(lc, roi, class_value=1)
+    >>> forest_metrics = geeadvance.calculate_class_metrics(lc, roi, class_value=1)
     >>> print(forest_metrics)
     """
     # Create binary mask for the class

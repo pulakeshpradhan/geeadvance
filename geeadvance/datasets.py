@@ -71,17 +71,21 @@ def load_dataset(
     
     Examples
     --------
-    >>> import geeadvance as ga
     >>> import ee
+    >>> import geeadvance
+    >>> 
+    >>> # Standard GEE authentication and initialization
+    >>> ee.Authenticate()
+    >>> ee.Initialize(project='your-project-id')
     >>> 
     >>> # Load MODIS land cover
-    >>> lc = ga.load_dataset('MODIS/006/MCD12Q1', 
-    ...                      start_date='2020-01-01',
-    ...                      end_date='2020-12-31')
+    >>> lc = geeadvance.load_dataset('MODIS/006/MCD12Q1', 
+    ...                              start_date='2020-01-01',
+    ...                              end_date='2020-12-31')
     >>> 
     >>> # Load with region filter
     >>> roi = ee.Geometry.Rectangle([77.0, 20.0, 78.0, 21.0])
-    >>> lc = ga.load_dataset('MODIS/006/MCD12Q1', region=roi)
+    >>> lc = geeadvance.load_dataset('MODIS/006/MCD12Q1', region=roi)
     """
     try:
         # Load the dataset
@@ -166,13 +170,13 @@ def list_datasets(category: Optional[str] = None) -> Dict:
     
     Examples
     --------
-    >>> import geeadvance as ga
+    >>> import geeadvance
     >>> 
     >>> # List all datasets
-    >>> datasets = ga.list_datasets()
+    >>> datasets = geeadvance.list_datasets()
     >>> 
     >>> # List only land cover datasets
-    >>> lc_datasets = ga.list_datasets('landcover')
+    >>> lc_datasets = geeadvance.list_datasets('landcover')
     >>> print(lc_datasets)
     """
     if category:
@@ -200,8 +204,8 @@ def get_dataset_info(dataset_id: str) -> Dict:
     
     Examples
     --------
-    >>> import geeadvance as ga
-    >>> info = ga.get_dataset_info('MODIS/006/MCD12Q1')
+    >>> import geeadvance
+    >>> info = geeadvance.get_dataset_info('MODIS/006/MCD12Q1')
     >>> print(info['bands'])
     """
     try:
@@ -254,13 +258,17 @@ def create_composite(
     
     Examples
     --------
-    >>> import geeadvance as ga
     >>> import ee
+    >>> import geeadvance
     >>> 
-    >>> collection = ga.load_dataset('MODIS/006/MOD13A2',
-    ...                              start_date='2020-01-01',
-    ...                              end_date='2020-12-31')
-    >>> composite = ga.create_composite(collection, method='median')
+    >>> # Setup
+    >>> ee.Authenticate()
+    >>> ee.Initialize(project='your-project-id')
+    >>> 
+    >>> collection = geeadvance.load_dataset('MODIS/006/MOD13A2',
+    ...                                      start_date='2020-01-01',
+    ...                                      end_date='2020-12-31')
+    >>> composite = geeadvance.create_composite(collection, method='median')
     """
     if method == 'median':
         composite = collection.median()
@@ -298,8 +306,8 @@ def get_landcover_classes(dataset_id: str) -> Dict[int, str]:
     
     Examples
     --------
-    >>> import geeadvance as ga
-    >>> classes = ga.get_landcover_classes('MODIS/006/MCD12Q1')
+    >>> import geeadvance
+    >>> classes = geeadvance.get_landcover_classes('MODIS/006/MCD12Q1')
     >>> print(classes)
     {1: 'Evergreen Needleleaf Forests', 2: 'Evergreen Broadleaf Forests', ...}
     """
