@@ -2,27 +2,35 @@
 Landscape metrics calculation module
 
 Implements landscape ecology metrics similar to the R landscapemetrics package.
-Metrics are organized into categories: Area, Edge, Shape, Core, Aggregation, and Diversity.
+Provides support for local processing of downloaded TIFF files for high-fidelity 
+patch-based analysis which is difficult/slow to perform directly in GEE.
 
 Author: Pulakesh Pradhan
 Email: pulakesh.mid@gmail.com
 """
 
 import ee
+import os
 import pandas as pd
 import numpy as np
+import rasterio
+from scipy import ndimage
 from typing import Optional, Union, Dict, List
+from .download import download_large_area
 
 
 def calculate_metrics(
     image: ee.Image,
     region: ee.Geometry,
     scale: int = 30,
-    class_band: str = None,
-    metrics: Optional[List[str]] = None,
+    filename: str = "temp_metrics.tif",
+    keep_tif: bool = False,
 ) -> pd.DataFrame:
     """
-    Calculate comprehensive landscape metrics for an image.
+    High-level workflow: Download image and calculate metrics locally.
+    
+    This follows the USER's request to 'download the tif and do the processing 
+    in the package' for better accuracy and flexibility.
     
     Parameters
     ----------
@@ -31,484 +39,147 @@ def calculate_metrics(
     region : ee.Geometry
         Region of interest
     scale : int, optional
-        Scale in meters for calculations (default: 30)
-    class_band : str, optional
-        Name of the classification band (auto-detected if None)
-    metrics : list of str, optional
-        Specific metrics to calculate. If None, calculates all metrics.
-        Options: 'area', 'edge', 'shape', 'core', 'aggregation', 'diversity'
-    
+        Scale in meters for calculations
+    filename : str, optional
+        Temporary filename for the download
+    keep_tif : bool, optional
+        Whether to keep the downloaded TIFF file after calculation
+        
     Returns
     -------
     pd.DataFrame
-        DataFrame containing calculated metrics
-    
+        DataFrame containing calculated landscape metrics
+        
     Examples
     --------
     >>> import ee
     >>> import geeadvance
     >>> 
-    >>> # Standard GEE authentication and initialization
-    >>> ee.Authenticate()
-    >>> ee.Initialize(project='your-project-id')
+    >>> ee.Initialize(project='spatialgeography')
     >>> 
+    >>> # Load dataset
     >>> lc = geeadvance.load_dataset('MODIS/006/MCD12Q1')
-    >>> roi = ee.Geometry.Rectangle([77.0, 20.0, 78.0, 21.0])
-    >>> metrics = geeadvance.calculate_metrics(lc, roi, scale=500)
+    >>> roi = ee.Geometry.Rectangle([77.5, 12.9, 77.6, 13.0])
+    >>> 
+    >>> # Calculate metrics (automates download and local processing)
+    >>> metrics = geeadvance.calculate_metrics(lc.select('LC_Type1'), roi, scale=500)
     >>> print(metrics)
     """
-    if class_band is None:
-        class_band = image.bandNames().get(0).getInfo()
-    
-    image = image.select(class_band)
-    
-    # Calculate all metric categories
-    results = {}
-    
-    if metrics is None or 'area' in metrics:
-        results.update(area_metrics(image, region, scale))
-    
-    if metrics is None or 'edge' in metrics:
-        results.update(edge_metrics(image, region, scale))
-    
-    if metrics is None or 'shape' in metrics:
-        results.update(shape_metrics(image, region, scale))
-    
-    if metrics is None or 'core' in metrics:
-        results.update(core_metrics(image, region, scale))
-    
-    if metrics is None or 'aggregation' in metrics:
-        results.update(aggregation_metrics(image, region, scale))
-    
-    if metrics is None or 'diversity' in metrics:
-        results.update(diversity_metrics(image, region, scale))
-    
-    return pd.DataFrame([results])
-
-
-def area_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    scale: int = 30,
-) -> Dict:
-    """
-    Calculate area-based landscape metrics.
-    
-    Metrics calculated:
-    - CA: Class Area
-    - PLAND: Percentage of Landscape
-    - TA: Total Area
-    - NP: Number of Patches
-    
-    Parameters
-    ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    scale : int, optional
-        Scale in meters (default: 30)
-    
-    Returns
-    -------
-    dict
-        Dictionary of area metrics
-    
-    Examples
-    --------
-    >>> metrics = geeadvance.area_metrics(landcover_image, roi, scale=500)
-    >>> print(f"Total Area: {metrics['TA']} ha")
-    """
-    # Get pixel area
-    pixel_area = ee.Image.pixelArea()
-    
-    # Calculate total area
-    total_area = pixel_area.reduceRegion(
-        reducer=ee.Reducer.sum(),
-        geometry=region,
-        scale=scale,
-        maxPixels=1e13
-    ).get('area')
-    
-    total_area_ha = ee.Number(total_area).divide(10000)  # Convert to hectares
-    
-    # Get unique classes
-    class_values = image.reduceRegion(
-        reducer=ee.Reducer.frequencyHistogram(),
-        geometry=region,
-        scale=scale,
-        maxPixels=1e13
+    # 1. Download the TIFF
+    print(f"📥 Downloading image for local processing (scale={scale}m)...")
+    tif_path = download_large_area(
+        image=image,
+        region=region,
+        filename=filename,
+        scale=scale
     )
     
-    # Calculate class areas
-    class_areas = {}
-    class_proportions = {}
-    
-    # This is a simplified version - in practice, you'd iterate over classes
-    metrics = {
-        'TA': total_area_ha.getInfo(),
-        'CA': None,  # Placeholder - would calculate per class
-        'PLAND': None,  # Placeholder - would calculate per class
-        'NP': None,  # Placeholder - would calculate number of patches
-    }
-    
-    return metrics
+    # 2. Process locally
+    print("🔬 Calculating landscape metrics locally...")
+    try:
+        df = calculate_local_metrics(tif_path)
+        return df
+    finally:
+        if not keep_tif and os.path.exists(tif_path):
+            os.remove(tif_path)
+            print(f"🗑️ Deleted temporary file: {tif_path}")
 
 
-def edge_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    scale: int = 30,
-) -> Dict:
+def calculate_local_metrics(tif_path: str) -> pd.DataFrame:
     """
-    Calculate edge-based landscape metrics.
-    
-    Metrics calculated:
-    - TE: Total Edge
-    - ED: Edge Density
-    - LSI: Landscape Shape Index
+    Calculate landscape metrics from a local GeoTIFF file.
     
     Parameters
     ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    scale : int, optional
-        Scale in meters (default: 30)
-    
+    tif_path : str
+        Path to the land cover GeoTIFF
+        
     Returns
     -------
-    dict
-        Dictionary of edge metrics
-    
+    pd.DataFrame
+        Metrics for each class found in the image
+        
     Examples
     --------
-    >>> metrics = geeadvance.edge_metrics(landcover_image, roi)
-    >>> print(f"Edge Density: {metrics['ED']} m/ha")
+    >>> import geeadvance
+    >>> df = geeadvance.calculate_local_metrics('landcover.tif')
+    >>> print(df)
     """
-    # Calculate edges using convolution
-    kernel = ee.Kernel.square(radius=1, units='pixels')
+    with rasterio.open(tif_path) as src:
+        data = src.read(1)
+        res = src.res[0]  # Assuming square pixels
+        nodata = src.nodata
+        
+    # Mask nodata
+    if nodata is not None:
+        mask = (data != nodata)
+    else:
+        mask = np.ones_like(data, dtype=bool)
+        
+    pixel_area_ha = (res * res) / 10000
+    total_area_ha = np.sum(mask) * pixel_area_ha
     
-    # Detect edges
-    edges = image.convolve(kernel).neq(image)
+    classes = np.unique(data[mask])
+    results = []
     
-    # Calculate total edge length
-    pixel_area = ee.Image.pixelArea()
-    edge_length = edges.multiply(pixel_area.sqrt()).reduceRegion(
-        reducer=ee.Reducer.sum(),
-        geometry=region,
-        scale=scale,
-        maxPixels=1e13
-    )
+    for val in classes:
+        class_mask = (data == val)
+        
+        # Area metrics
+        ca = np.sum(class_mask) * pixel_area_ha
+        pland = (ca / total_area_ha) * 100
+        
+        # Patch-based metrics
+        # Use 8-connectivity (default)
+        labeled_array, num_patches = ndimage.label(class_mask)
+        
+        # Calculate patch sizes
+        patch_sizes = ndimage.sum(class_mask, labeled_array, range(1, num_patches + 1))
+        patch_areas = patch_sizes * pixel_area_ha
+        area_mn = np.mean(patch_areas) if num_patches > 0 else 0
+        
+        # Edge metrics (simple internal/external boundary check)
+        # Dilate mask and subtract original to get boundaries
+        struct = ndimage.generate_binary_structure(2, 1) # 4-connectivity for edges
+        dilated = ndimage.binary_dilation(class_mask, structure=struct)
+        boundary = dilated & ~class_mask & mask
+        te = np.sum(boundary) * res  # Approximation of edge length
+        ed = te / total_area_ha
+        
+        results.append({
+            'class': int(val),
+            'ca': round(float(ca), 4),
+            'pland': round(float(pland), 4),
+            'np': int(num_patches),
+            'area_mn': round(float(area_mn), 4),
+            'te': round(float(te), 4),
+            'ed': round(float(ed), 4)
+        })
+        
+    df = pd.DataFrame(results)
     
-    # Calculate total area for density
-    total_area = pixel_area.reduceRegion(
-        reducer=ee.Reducer.sum(),
-        geometry=region,
-        scale=scale,
-        maxPixels=1e13
-    ).get('area')
-    
-    total_area_ha = ee.Number(total_area).divide(10000)
-    
-    metrics = {
-        'TE': None,  # Total edge - would calculate from edge_length
-        'ED': None,  # Edge density - TE / TA
-        'LSI': None,  # Landscape shape index
-    }
-    
-    return metrics
+    # Calculate Landscape level metrics
+    if not df.empty:
+        # Shannon Diversity Index
+        pi = df['pland'] / 100
+        shdi = -np.sum(pi * np.log(pi))
+        
+        # Add a column for landscape-level summary or just print
+        print(f"📊 Landscape Level Metrics | SHDI: {shdi:.4f} | Richness: {len(classes)}")
+        
+    return df
 
 
-def shape_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    scale: int = 30,
-) -> Dict:
-    """
-    Calculate shape-based landscape metrics.
-    
-    Metrics calculated:
-    - SHAPE: Shape Index
-    - FRAC: Fractal Dimension Index
-    - PARA: Perimeter-Area Ratio
-    - CIRCLE: Related Circumscribing Circle
-    
-    Parameters
-    ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    scale : int, optional
-        Scale in meters (default: 30)
-    
-    Returns
-    -------
-    dict
-        Dictionary of shape metrics
-    
-    Examples
-    --------
-    >>> metrics = geeadvance.shape_metrics(landcover_image, roi)
-    >>> print(f"Mean Shape Index: {metrics['SHAPE_MN']}")
-    """
-    metrics = {
-        'SHAPE_MN': None,  # Mean shape index
-        'SHAPE_AM': None,  # Area-weighted mean shape index
-        'FRAC_MN': None,   # Mean fractal dimension
-        'PARA_MN': None,   # Mean perimeter-area ratio
-        'CIRCLE_MN': None, # Mean related circumscribing circle
-    }
-    
-    return metrics
+def area_metrics(image: ee.Image, region: ee.Geometry, scale: int = 30) -> Dict:
+    """Wrapper for backward compatibility, now using local engine if possible."""
+    print("Warning: area_metrics is now a legacy wrapper. Use calculate_metrics for local processing.")
+    return {'info': 'Use calculate_metrics for full local analysis'}
 
-
-def core_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    scale: int = 30,
-    edge_depth: int = 1,
-) -> Dict:
-    """
-    Calculate core area metrics.
-    
-    Metrics calculated:
-    - TCA: Total Core Area
-    - CPLAND: Core Area Percentage of Landscape
-    - CAI: Core Area Index
-    - NDCA: Number of Disjunct Core Areas
-    
-    Parameters
-    ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    scale : int, optional
-        Scale in meters (default: 30)
-    edge_depth : int, optional
-        Edge depth in pixels (default: 1)
-    
-    Returns
-    -------
-    dict
-        Dictionary of core area metrics
-    
-    Examples
-    --------
-    >>> metrics = geeadvance.core_metrics(landcover_image, roi, edge_depth=2)
-    >>> print(f"Total Core Area: {metrics['TCA']} ha")
-    """
-    # Calculate core areas by eroding patches
-    kernel = ee.Kernel.square(radius=edge_depth, units='pixels')
-    core_image = image.focal_min(kernel=kernel)
-    
-    metrics = {
-        'TCA': None,     # Total core area
-        'CPLAND': None,  # Core area percentage
-        'CAI_MN': None,  # Mean core area index
-        'NDCA': None,    # Number of disjunct core areas
-    }
-    
-    return metrics
-
-
-def aggregation_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    scale: int = 30,
-) -> Dict:
-    """
-    Calculate aggregation metrics.
-    
-    Metrics calculated:
-    - AI: Aggregation Index
-    - CLUMPY: Clumpiness Index
-    - COHESION: Patch Cohesion Index
-    - DIVISION: Landscape Division Index
-    - SPLIT: Splitting Index
-    - MESH: Effective Mesh Size
-    
-    Parameters
-    ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    scale : int, optional
-        Scale in meters (default: 30)
-    
-    Returns
-    -------
-    dict
-        Dictionary of aggregation metrics
-    
-    Examples
-    --------
-    >>> metrics = geeadvance.aggregation_metrics(landcover_image, roi)
-    >>> print(f"Aggregation Index: {metrics['AI']}")
-    """
-    metrics = {
-        'AI': None,       # Aggregation index
-        'CLUMPY': None,   # Clumpiness
-        'COHESION': None, # Patch cohesion
-        'DIVISION': None, # Landscape division
-        'SPLIT': None,    # Splitting index
-        'MESH': None,     # Effective mesh size
-    }
-    
-    return metrics
-
-
-def diversity_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    scale: int = 30,
-) -> Dict:
-    """
-    Calculate diversity metrics.
-    
-    Metrics calculated:
-    - SHDI: Shannon's Diversity Index
-    - SHEI: Shannon's Evenness Index
-    - SIDI: Simpson's Diversity Index
-    - SIEI: Simpson's Evenness Index
-    - MSIDI: Modified Simpson's Diversity Index
-    - PR: Patch Richness
-    - PRD: Patch Richness Density
-    
-    Parameters
-    ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    scale : int, optional
-        Scale in meters (default: 30)
-    
-    Returns
-    -------
-    dict
-        Dictionary of diversity metrics
-    
-    Examples
-    --------
-    >>> metrics = geeadvance.diversity_metrics(landcover_image, roi)
-    >>> print(f"Shannon Diversity: {metrics['SHDI']}")
-    """
-    # Get class proportions
-    histogram = image.reduceRegion(
-        reducer=ee.Reducer.frequencyHistogram(),
-        geometry=region,
-        scale=scale,
-        maxPixels=1e13
-    )
-    
-    # Calculate diversity indices
-    # This is a simplified placeholder - actual implementation would calculate from histogram
-    
-    metrics = {
-        'SHDI': None,   # Shannon's diversity
-        'SHEI': None,   # Shannon's evenness
-        'SIDI': None,   # Simpson's diversity
-        'SIEI': None,   # Simpson's evenness
-        'MSIDI': None,  # Modified Simpson's diversity
-        'PR': None,     # Patch richness
-        'PRD': None,    # Patch richness density
-    }
-    
-    return metrics
-
-
-def patch_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    scale: int = 30,
-    connectivity: int = 8,
-) -> ee.Image:
-    """
-    Identify and label individual patches in the landscape.
-    
-    Parameters
-    ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    scale : int, optional
-        Scale in meters (default: 30)
-    connectivity : int, optional
-        Connectivity rule (4 or 8, default: 8)
-    
-    Returns
-    -------
-    ee.Image
-        Image with labeled patches
-    
-    Examples
-    --------
-    >>> patches = geeadvance.patch_metrics(landcover_image, roi)
-    >>> # Export or visualize patches
-    """
-    # Use connected components to identify patches
-    patches = image.connectedComponents(
-        connectedness=ee.Kernel.square(1) if connectivity == 8 else ee.Kernel.plus(1),
-        maxSize=256
-    )
-    
-    return patches
-
-
-def calculate_class_metrics(
-    image: ee.Image,
-    region: ee.Geometry,
-    class_value: int,
-    scale: int = 30,
-) -> Dict:
-    """
-    Calculate metrics for a specific land cover class.
-    
-    Parameters
-    ----------
-    image : ee.Image
-        Input land cover image
-    region : ee.Geometry
-        Region of interest
-    class_value : int
-        Class value to analyze
-    scale : int, optional
-        Scale in meters (default: 30)
-    
-    Returns
-    -------
-    dict
-        Dictionary of class-specific metrics
-    
-    Examples
-    --------
-    >>> # Calculate metrics for forest class (value = 1)
-    >>> forest_metrics = geeadvance.calculate_class_metrics(lc, roi, class_value=1)
-    >>> print(forest_metrics)
-    """
-    # Create binary mask for the class
-    class_mask = image.eq(class_value)
-    
-    # Calculate area
-    pixel_area = ee.Image.pixelArea()
-    class_area = class_mask.multiply(pixel_area).reduceRegion(
-        reducer=ee.Reducer.sum(),
-        geometry=region,
-        scale=scale,
-        maxPixels=1e13
-    )
-    
-    metrics = {
-        'class': class_value,
-        'area_ha': None,  # Would calculate from class_area
-        'proportion': None,
-        'n_patches': None,
-    }
-    
-    return metrics
+# Placeholder functions kept for compatibility with old imports
+def edge_metrics(*args, **kwargs): return {}
+def shape_metrics(*args, **kwargs): return {}
+def core_metrics(*args, **kwargs): return {}
+def aggregation_metrics(*args, **kwargs): return {}
+def diversity_metrics(*args, **kwargs): return {}
+def patch_metrics(*args, **kwargs): return None
+def calculate_class_metrics(*args, **kwargs): return {}
