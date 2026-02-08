@@ -4,7 +4,7 @@
 
 ![GeeAdvance Logo](assets/logo.png)
 
-**Advanced Landscape Metrics for Google Earth Engine**
+## Advanced Landscape Metrics for Google Earth Engine
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/pulakeshpradhan/geeadvance/blob/main/LICENSE)
@@ -51,8 +51,7 @@ import ee
 import geeadvance
 
 # Authenticate and initialize
-ee.Authenticate()
-ee.Initialize(project='your-project-id')
+geeadvance.initialize(project='spatialgeography')
 
 # Define region of interest
 roi = geeadvance.create_bbox(77.0, 20.0, 78.0, 21.0)
@@ -117,16 +116,16 @@ Assess wetland patch dynamics and connectivity.
 ## Why GeeAdvance?
 
 | Feature | GeeAdvance | Traditional Approach |
-|---------|------------|---------------------|
+| :--- | :--- | :--- |
 | **Data Access** | Direct GEE integration | Manual download required |
 | **Large Areas** | Automatic tiling | Size limitations |
 | **Metrics** | 30+ landscape metrics | Manual calculation |
 | **Learning Curve** | Beginner-friendly | Steep |
 | **Speed** | Cloud computing | Local processing |
 
-## Author
+### Author
 
-**Pulakesh Pradhan**
+### Pulakesh Pradhan
 
 - Email: [pulakesh.mid@gmail.com](mailto:pulakesh.mid@gmail.com)
 - GitHub: [@pulakeshpradhan](https://github.com/pulakeshpradhan)
@@ -162,11 +161,9 @@ This project is licensed under the MIT License - see the [LICENSE](about/license
 
 ---
 
-<div align="center">
+<p align="center">Made with ❤️ for the landscape ecology community</p>
 
-**Made with ❤️ for the landscape ecology community**
-
-[Get Started](getting-started/installation.md){ .md-button .md-button--primary }
-[View on GitHub](https://github.com/pulakeshpradhan/geeadvance){ .md-button }
-
-</div>
+<p align="center">
+  <a href="getting-started/installation.md" class="md-button md-button--primary">Get Started</a>
+  <a href="https://github.com/pulakeshpradhan/geeadvance" class="md-button">View on GitHub</a>
+</p>
